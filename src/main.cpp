@@ -54,6 +54,8 @@ void loop() {
   Serial.print("Napiecie baterii: ");
   Serial.print(batteryVoltage, 2);
   Serial.println(" V");
+  Serial.print("adcValue: ");
+  Serial.println(adcValue, 2);
 
   delay(1000); 
 }

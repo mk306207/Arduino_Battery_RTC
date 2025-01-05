@@ -20,21 +20,25 @@ void setup() {
   lcd.init();
   lcd.backlight();
 
-  if(!(rtc.begin())){
-    lcd.setCursor(0, 0);
-    lcd.print("Brak RTC!");
+  if (!rtc.begin()) {
+    Serial.println("Nie znaleziono RTC!");
+    while (1);
   }
 
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  if (rtc.lostPower()) {
+    Serial.println("RTC stracił zasilanie. Ustawiam nowy czas...");
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  } else {
+    Serial.println("RTC działa poprawnie, czas nie został zmieniony.");
+  }
+
 }
 
 void loop() {
   DateTime now = rtc.now();
-
   int adcValue = analogRead(BATTERY_PIN);
   float voltage = adcValue * (3.3 / 1023.0);
   float batteryVoltage = voltage * ((R1 + R2) / (float)R2);
-
   lcd.setCursor(0,0);
   if (now.hour() < 10) lcd.print("0");
   lcd.print(now.hour(), DEC);
@@ -56,7 +60,7 @@ void loop() {
   Serial.println(" V");
   Serial.print("adcValue: ");
   Serial.println(adcValue, 2);
-
+  Serial.print("Czas: ");
   delay(1000); 
 }
 
